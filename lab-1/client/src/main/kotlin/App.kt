@@ -19,7 +19,7 @@ class App(val canvas : HTMLCanvasElement, val overlay : HTMLDivElement) {
   fun resize() {
     canvas.width = canvas.clientWidth//#canvas.width# rendering resolution ˙HUN˙ rajzolási felbontás #canvas.clientWidth# canvas size ˙HUN˙ a vászon mérete 
     canvas.height = canvas.clientHeight
-    scene.resize(canvas)
+    scene.resize(gl, canvas)
   }
 
   @Suppress("UNUSED_PARAMETER")
@@ -62,7 +62,7 @@ class App(val canvas : HTMLCanvasElement, val overlay : HTMLDivElement) {
   }  
 
   fun update() {
-    scene.update(keysPressed)    
+    scene.update(gl, keysPressed)    
     window.requestAnimationFrame { update() }
   }
 }
