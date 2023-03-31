@@ -7,3 +7,5 @@ web/
 *.sublime-workspace
 Thumbs.db
 *.zip
+
+tags
