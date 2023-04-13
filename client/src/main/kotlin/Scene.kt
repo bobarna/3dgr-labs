@@ -19,22 +19,57 @@ class Scene (
   val fsTextured = Shader(gl, GL.FRAGMENT_SHADER, "textured-fs.glsl")
   val texturedProgram = Program(gl, vsTextured, fsTextured)
 
+  val vsEnv = Shader(gl, GL.VERTEX_SHADER, "env-vs.glsl")
+  val fsEnv = Shader(gl, GL.FRAGMENT_SHADER, "env-fs.glsl")
+  val envProgram = Program(gl, vsEnv, fsEnv)
+
+  val envTexture = TextureCube(gl,
+    "media/posx512.jpg",
+    "media/negx512.jpg",
+    "media/posy512.jpg",
+    "media/negy512.jpg",
+    "media/posz512.jpg",
+    "media/negz512.jpg"
+  )
+
+  val backgroundMaterial = Material(envProgram)
+
   val texturedQuadGeometry = TexturedQuadGeometry(gl)
 
   // LABTODO: load geometries from the JSON file, create Meshes  
+  val jsonLoader = JsonLoader()
+  val slowpokeMeshes = jsonLoader.loadMeshes(gl,
+    "media/slowpoke/slowpoke.json",
+    Material(texturedProgram).apply{
+      this["colorTexture"]?.set(
+        Texture2D(gl, "media/slowpoke/YadonDh.png")
+      )
+    },
+    Material(texturedProgram).apply{
+      this["colorTexture"]?.set(
+        Texture2D(gl, "media/slowpoke/YadonEyeDh.png")
+      )
+    }
+  )
+
+  val envMesh = Mesh(backgroundMaterial, texturedQuadGeometry)
 
   val gameObjects = ArrayList<GameObject>()
 
   init {
     // LABTODO: create and add game object using meshes loaded from JSON
+    gameObjects += GameObject(*slowpokeMeshes)
+    backgroundMaterial["envTexture"]?.set( this.envTexture)
+    gameObjects += GameObject(envMesh)
   }
 
   // LABTODO: replace with 3D camera
-  val camera = OrthoCamera(*Program.all).apply{
-    position.set(1f, 1f)
-    windowSize.set(20f, 20f)
-    updateViewProjMatrix()
-  }
+  // val camera = OrthoCamera(*Program.all).apply{
+  //   position.set(1f, 1f)
+  //   windowSize.set(20f, 20f)
+  //   updateViewProjMatrix()
+  // }
+  val camera = PerspectiveCamera(*Program.all).apply{}
 
   fun resize(canvas : HTMLCanvasElement) {
     gl.viewport(0, 0, canvas.width, canvas.height)//#viewport# tell the rasterizer which part of the canvas to draw to ˙HUN˙ a raszterizáló ide rajzoljon
@@ -46,6 +81,7 @@ class Scene (
 
   init{
     //LABTODO: enable depth test
+    gl.enable(GL.DEPTH_TEST)
     addComponentsAndGatherUniforms(*Program.all)
   }
 
@@ -57,6 +93,7 @@ class Scene (
     timeAtLastFrame = timeAtThisFrame
 
     //LABTODO: move camera
+    camera.move(dt, keysPressed)
     
     gl.clearColor(0.3f, 0.0f, 0.3f, 1.0f)//## red, green, blue, alpha in [0, 1]
     gl.clearDepth(1.0f)//## will be useful in 3D ˙HUN˙ 3D-ben lesz hasznos

@@ -58,6 +58,9 @@ class PerspectiveCamera(vararg programs : Program) : UniformProvider("camera") {
           0.0f ,    0.0f ,  2*n*f/(n-f) ,   0.0f)
 
     //LABTODO: rayDirMatrix
+    rayDirMatrix.set(Mat4().translate(position) * viewProjMatrix)
+    rayDirMatrix.invert()
+
   }
 
   fun setAspectRatio(ar : Float) { 
@@ -77,22 +80,22 @@ class PerspectiveCamera(vararg programs : Program) : UniformProvider("camera") {
       } 
       mouseDelta.set()
     }
-    if("W" in keysPressed) { 
+    if("W" in keysPressed || "w" in keysPressed) { 
       position += ahead * (speed * dt) 
     } 
-    if("S" in keysPressed) { 
+    if("S" in keysPressed || "s" in keysPressed) { 
       position -= ahead * (speed * dt)
     } 
-    if("D" in keysPressed) { 
+    if("D" in keysPressed || "d" in keysPressed) { 
       position += right * (speed * dt) 
     } 
-    if("A" in keysPressed) { 
+    if("A" in keysPressed || "a" in keysPressed) { 
       position -= right * (speed * dt) 
     } 
-    if("E" in keysPressed) { 
+    if("E" in keysPressed || "e" in keysPressed) { 
       position += up * (speed * dt) 
     } 
-    if("Q" in keysPressed) { 
+    if("Q" in keysPressed || "q" in keysPressed) { 
       position -= up * (speed * dt) 
     } 
 
